@@ -33,7 +33,7 @@ try {
   }
 }
 
-const [npmCommand, createCommand, dir] = args._
+const dir = args._[args._.length - 1];
 
 if (!dir) {
   console.log(readFileSync(join(__dirname, 'readme.md'), 'utf8'))
@@ -47,7 +47,7 @@ now init nextjs-static ${dir} &&
 cd ${dir} &&
 
 # copy files from template into new project folder
-cp -r ../skeleton/. . &&
+cp -r ${__dirname}/skeleton/. . &&
 
 ${args['--npm-install'] ? `
 # npm install (using yarn) dependencies specified
@@ -66,7 +66,7 @@ sanity init -y --output-path sanity-cms --dataset production --project ${args['-
 
 ${args['--with-emotion'] ? `
 # setup emotion, including dependencies, babel config and demo in pages/emotion.js
-cp -r ../skeleton-with-emotion/. . &&
+cp -r ${__dirname}/skeleton-with-emotion/. . &&
 yarn add emotion emotion-theming @emotion/babel-preset-css-prop \\
   @emotion/core @emotion/is-prop-valid @emotion/styled &&
 node -p <<HERE &&
