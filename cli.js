@@ -41,9 +41,9 @@ if (!dir) {
 }
 
 const command = `
-# use globally installed now command to initialise static next js boilerplate
+# use globally installed now command to initialise serverless next js boilerplate
 which now &&
-now init nextjs-static ${dir} &&
+now init nextjs ${dir} &&
 cd ${dir} &&
 
 # copy files from template into new project folder
