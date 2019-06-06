@@ -49,6 +49,20 @@ cd ${dir} &&
 # copy files from template into new project folder
 cp -r ${__dirname}/skeleton/. . &&
 
+# install core dependencies
+yarn add next-offline isomorphic-unfetch
+
+# add build scripts to package file
+node -e 'require("fs").writeFileSync("./package.json", JSON.stringify({
+  ...require("./package.json"),
+  scripts: {
+    "build": "next build",
+    "deploy": "now",
+    "dev": "next",
+    "start": "next start"
+  }
+}, null, 2))'
+
 ${args['--npm-install'] ? `
 # npm install (using yarn) dependencies specified
 yarn add ${args['--npm-install'].join(',').split(',').join(' ')}
