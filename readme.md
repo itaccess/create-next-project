@@ -30,4 +30,3 @@ Create a boilerplate static next app configured to be deployed to zeit's now inf
 ... configure santiy cms gui and create new sanity project named after output directory ...
 
     $ npm create next-project next-app-name --create-sanity
-

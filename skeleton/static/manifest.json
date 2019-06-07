@@ -1,7 +1,12 @@
 {
-  "short_name": "Next PWA",
-  "name": "Next PWA Boilerplate",
+  "short_name": "Next Project",
+  "name": "Next Project",
   "icons": [
+    {
+      "src": "/static/graphics/icon-32.png",
+      "sizes": "32x32",
+      "type": "image/png"
+    },
     {
       "src": "/static/graphics/icon-192.png",
       "sizes": "192x192",

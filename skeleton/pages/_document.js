@@ -1,7 +1,10 @@
 import Document, { Head, Main, NextScript } from "next/document";
+const manifest = require("../static/manifest.json");
 
-const HTML_TITLE = "next-project";
-const META_DESCRIPTION = "next-project";
+const HTML_TITLE = manifest.short_name;
+const META_DESCRIPTION = manifest.name;
+const THEME_COLOR = manifest.theme_color;
+const SHORTCUT_ICON = manifest.icons[0].src;
 
 export default class MyDocument extends Document {
   static getInitialProps({ renderPage }) {
@@ -35,13 +38,9 @@ export default class MyDocument extends Document {
         <Head>
           <meta charset="UTF-8" />
           <title>{HTML_TITLE}</title>
-          <meta name="theme-color" content="#fff" />
+          <meta name="theme-color" content={THEME_COLOR} />
           <meta name="Description" content={META_DESCRIPTION} />
-          <link
-            rel="shortcut icon"
-            href="/static/graphics/icon-32.png"
-            type="image/x-icon"
-          />
+          <link rel="shortcut icon" href={SHORTCUT_ICON} type="image/x-icon" />
           <link rel="manifest" href="/static/manifest.json" />
           {this.props.styleTags}
         </Head>

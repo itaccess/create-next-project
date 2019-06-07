@@ -18,7 +18,10 @@ try {
       "--create-sanity": Boolean,
       "--with-sanity": String,
       "--with-emotion": Boolean,
-      "--npm-install": [String]
+      "--npm-install": [String],
+      "--description": String,
+      "--theme-color": String,
+      "--theme-background": String
     },
     {
       // permissive: true
@@ -43,25 +46,30 @@ if (!dir) {
 const command = `
 # use globally installed now command to initialise static next js boilerplate
 which now &&
-now init nextjs-static ${dir} &&
+now init nextjs ${dir} &&
 cd ${dir} &&
 
 # copy files from template into new project folder
 cp -r ${__dirname}/skeleton/. . &&
 
+# update custom config and meta information
+node -p <<HERE &&
+const package = require("./package.json")
+package.name = "${dir}"
+require("fs").writeFileSync("./package.json", JSON.stringify(package, null, 2))
+const now = require("./now.json")
+now.name = "${dir}"
+require("fs").writeFileSync("./now.json", JSON.stringify(now, null, 2))
+const manifest = require("./static/manifest.json")
+manifest.short_name = "${dir}"
+${args['--description'] ? `manifest.name = "${args['--description']}"` : ''}
+${args['--theme-color'] ? `manifest.theme_color = "${args['--theme-color']}"` : ''}
+${args['--theme-background'] ? `manifest.background_color = "${args['--theme-background']}"` : ''}
+require("fs").writeFileSync("./static/manifest.json", JSON.stringify(manifest, null, 2))
+HERE
+
 # install core dependencies
 yarn add next-offline isomorphic-unfetch
-
-# add build scripts to package file
-node -e 'require("fs").writeFileSync("./package.json", JSON.stringify({
-  ...require("./package.json"),
-  scripts: {
-    "build": "next build",
-    "deploy": "now",
-    "dev": "next",
-    "start": "next start"
-  }
-}, null, 2))'
 
 ${args['--npm-install'] ? `
 # npm install (using yarn) dependencies specified

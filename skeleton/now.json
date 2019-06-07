@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "name": "next-package",
+  "name": "next-project",
   "routes": [
     {
       "src": "^/service-worker.js$",
@@ -16,6 +16,5 @@
       "src": "next.config.js",
       "use": "@now/next"
     }
-  ],
-  "regions": ["all"]
+  ]
 }
