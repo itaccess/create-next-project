@@ -77,12 +77,12 @@ yarn add ${args['--npm-install'].join(',').split(',').join(' ')}
 ` : ``}
 
 ${args['--create-sanity'] ? `
-# setup new sanity project using @sanity/cli in sanity-cms folder
+# setup new sanity project using @sanity/cli in cms folder
 sanity init -y --output-path sanity-cms --dataset production --create-project ${dir} &&
 ` : ``}
 
 ${args['--with-sanity'] ? `
-# setup existing sanity project using @sanity/cli in sanity-cms folder
+# setup existing sanity project using @sanity/cli in cms folder
 sanity init -y --output-path sanity-cms --dataset production --project ${args['--with-sanity']} &&
 ` : ``}
 
