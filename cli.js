@@ -79,11 +79,13 @@ yarn add ${args['--npm-install'].join(',').split(',').join(' ')}
 ${args['--create-sanity'] ? `
 # setup new sanity project using @sanity/cli in cms folder
 sanity init -y --output-path cms --dataset production --create-project ${dir} &&
+cp -r ${__dirname}/skeleton-with-sanity/. . &&
 ` : ``}
 
 ${args['--with-sanity'] ? `
 # setup existing sanity project using @sanity/cli in cms folder
 sanity init -y --output-path cms --dataset production --project ${args['--with-sanity']} &&
+cp -r ${__dirname}/skeleton-with-sanity/. . &&
 ` : ``}
 
 ${args['--with-emotion'] ? `
