@@ -7,10 +7,11 @@
     "create-next-project": "cli.js"
   },
   "scripts": {
-    "build": "next build",
-    "deploy": "now",
-    "dev": "next",
-    "start": "next start"
+    "dev": "now dev && cd cms && sanity start",
+    "start": "cd cms && sanity start",
+    "deploy": "cd cms && now",
+    "now-dev": "next",
+    "now-build": "next build"
   },
   "keywords": [],
   "author": "",
