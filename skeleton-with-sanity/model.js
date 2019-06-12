@@ -2,7 +2,7 @@ const sanityClient = require("@sanity/client");
 const apiKey = require('./cms/sanity.json').api.projectId
 
 const cmsClient = sanityClient({
-  projectId: {apiKey},
+  projectId: apiKey,
   dataset: "production",
   useCdn: false
 });
