@@ -62,6 +62,8 @@ now.name = "${dir}"
 require("fs").writeFileSync("./now.json", JSON.stringify(now, null, 2))
 const manifest = require("./static/manifest.json")
 manifest.short_name = "${dir}"
+const now = require("./now.json")
+now.name = "${dir}"
 ${args['--description'] ? `manifest.name = "${args['--description']}"` : ''}
 ${args['--theme-color'] ? `manifest.theme_color = "${args['--theme-color']}"` : ''}
 ${args['--theme-background'] ? `manifest.background_color = "${args['--theme-background']}"` : ''}
