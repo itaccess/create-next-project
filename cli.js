@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 const childProcess = require("child_process");
 const arg = require("arg");
-const {readFileSync} = require('fs')
-const {join} = require('path')
+const { readFileSync } = require("fs");
+const { join } = require("path");
 
 const exec = cmd =>
   childProcess.execSync(cmd, {
@@ -48,24 +48,20 @@ const command = `
 which now &&
 now init nextjs ${dir} &&
 cd ${dir} &&
-
 # copy files from template into new project folder
 cp -r ${__dirname}/skeleton/. . &&
-
 # update custom config and meta information
 node -p <<HERE &&
 const package = require("./package.json")
 package.name = "${dir}"
+package.scripts.dev = "now dev"
+package.scripts['now-dev'] = "next"
 require("fs").writeFileSync("./package.json", JSON.stringify(package, null, 2))
 const now = require("./now.json")
 now.name = "${dir}"
 require("fs").writeFileSync("./now.json", JSON.stringify(now, null, 2))
 const manifest = require("./static/manifest.json")
 manifest.short_name = "${dir}"
-const now = require("./now.json")
-now.name = "${dir}"
-const cmsName = require("./cms/package.json")
-cmsName.name = "${dir}"
 ${args['--description'] ? `manifest.name = "${args['--description']}"` : ''}
 ${args['--theme-color'] ? `manifest.theme_color = "${args['--theme-color']}"` : ''}
 ${args['--theme-background'] ? `manifest.background_color = "${args['--theme-background']}"` : ''}
@@ -83,13 +79,67 @@ yarn add ${args['--npm-install'].join(',').split(',').join(' ')}
 ${args['--create-sanity'] ? `
 # setup new sanity project using @sanity/cli in cms folder
 sanity init -y --output-path cms --dataset production --create-project ${dir} &&
-cp -r ${__dirname}/skeleton-with-sanity/. . &&
 ` : ``}
 
 ${args['--with-sanity'] ? `
 # setup existing sanity project using @sanity/cli in cms folder
 sanity init -y --output-path cms --dataset production --project ${args['--with-sanity']} &&
+` : ``}
+
+${args['--create-sanity'] || args['--with-sanity'] ? `
+yarn add @sanity/client
+# copy sanity skeleton files
 cp -r ${__dirname}/skeleton-with-sanity/. . &&
+# because we are using sanity, update now.json to remap all routes to /
+node -p <<HERE &&
+const now = require("./now.json")
+now.routes.push(
+  { "src": "/static/(.*)", "dest": "/static/\\\$1" },
+  { "src": "/_next/(.*)", "dest": "/_next/\\\$1" },
+  { "src": "/(?<slug>.*)", "dest": "/?slug=/\\\$slug" }
+)
+require("fs").writeFileSync("./now.json", JSON.stringify(now, null, 2))
+HERE
+rm pages/about.js
+cat <<HERE > pages/index.js
+import Link from "next/link";
+import model from "../app/model";
+import Header from "../components/header";
+
+const Page = ({ slug, data }) => {
+  return (
+    <div>
+      <Header />
+      {/* map page data to components here... */}
+      <pre>
+        <code>{JSON.stringify(data, null, 2)}</code>
+      </pre>
+    </div>
+  );
+};
+
+Page.getInitialProps = async ({ query: { slug }, res }) => {
+  const data = model.mapStar(await model.getStar());
+  /* it might be useful to filter data by slug */
+  // data.route.filter(
+  //   i => i.slug.current === slug.replace(/^//, "").replace(/^\$/, "/")
+  // );
+
+  const etag = require("crypto")
+    .createHash("md5")
+    .update(JSON.stringify(data))
+    .digest("hex");
+
+  if (res) {
+    res.setHeader("Cache-Control", "s-maxage=1, stale-while-revalidate");
+    res.setHeader("X-version", etag);
+  }
+
+  return { slug, data };
+};
+
+export default Page;
+HERE
 ` : ``}
 
 ${args['--with-emotion'] ? `
@@ -120,3 +170,7 @@ if(args['--dry-run']) {
   exec(command)
 }
 
+// # set the cms package json main property to the model
+// const cmsPackage = require("./cms/package.json")
+// cmsPackage.main = "model.js"
+// require("fs").writeFileSync("./cms/package.json", JSON.stringify(cmsPackage, null, 2))

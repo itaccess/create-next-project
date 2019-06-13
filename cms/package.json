@@ -1,0 +1,32 @@
+{
+  "name": "boomerang",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Fire up new project that scores 100% on [lighthouse](https://developers.google.com/web/tools/lighthouse/) from adaptable template using a suite of awesome tools and services",
+  "main": "package.json",
+  "author": "Billy Moon <billy@itaccess.org>",
+  "license": "UNLICENSED",
+  "scripts": {
+    "start": "sanity start",
+    "test": "sanity check"
+  },
+  "keywords": [
+    "sanity"
+  ],
+  "dependencies": {
+    "@sanity/base": "^0.140.33",
+    "@sanity/components": "^0.140.33",
+    "@sanity/core": "^0.140.32",
+    "@sanity/default-layout": "^0.140.33",
+    "@sanity/default-login": "^0.140.15",
+    "@sanity/desk-tool": "^0.140.33",
+    "prop-types": "^15.6",
+    "react": "^16.2",
+    "react-dom": "^16.2"
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:itaccess/create-next-project.git"
+  }
+}
