@@ -55,7 +55,6 @@ node -p <<HERE &&
 const package = require("./package.json")
 package.name = "${dir}"
 package.scripts.dev = "now dev"
-package.scripts['now-dev'] = "next"
 require("fs").writeFileSync("./package.json", JSON.stringify(package, null, 2))
 const now = require("./now.json")
 now.name = "${dir}"
@@ -87,7 +86,7 @@ sanity init -y --output-path cms --dataset production --project ${args['--with-s
 ` : ``}
 
 ${args['--create-sanity'] || args['--with-sanity'] ? `
-yarn add @sanity/client
+yarn add @sanity/client next-sanity-schemas
 # copy sanity skeleton files
 cp -r ${__dirname}/skeleton-with-sanity/. . &&
 # because we are using sanity, update now.json to remap all routes to /
@@ -101,45 +100,6 @@ now.routes.push(
 require("fs").writeFileSync("./now.json", JSON.stringify(now, null, 2))
 HERE
 rm pages/about.js
-cat <<HERE > pages/index.js
-import Link from "next/link";
-import model from "../app/model";
-import Header from "../components/header";
-
-const Page = ({ slug, data }) => {
-  return (
-    <div>
-      <Header />
-      {/* map page data to components here... */}
-      <pre>
-        <code>{JSON.stringify(data, null, 2)}</code>
-      </pre>
-    </div>
-  );
-};
-
-Page.getInitialProps = async ({ query: { slug }, res }) => {
-  const data = model.mapStar(await model.getStar());
-  /* it might be useful to filter data by slug */
-  // data.route.filter(
-  //   i => i.slug.current === slug.replace(/^//, "").replace(/^\$/, "/")
-  // );
-
-  const etag = require("crypto")
-    .createHash("md5")
-    .update(JSON.stringify(data))
-    .digest("hex");
-
-  if (res) {
-    res.setHeader("Cache-Control", "s-maxage=1, stale-while-revalidate");
-    res.setHeader("X-version", etag);
-  }
-
-  return { slug, data };
-};
-
-export default Page;
-HERE
 ` : ``}
 
 ${args['--with-emotion'] ? `
