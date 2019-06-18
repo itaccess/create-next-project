@@ -2,22 +2,14 @@
   "name": "create-next-project",
   "version": "1.4.0",
   "description": "",
-  "main": "index.js",
+  "main": "cli.js",
   "bin": {
     "create-next-project": "cli.js"
-  },
-  "scripts": {
-    "dev": "now dev && cd cms && sanity start",
-    "start": "cd cms && sanity start",
-    "deploy": "cd cms && now",
-    "now-dev": "next",
-    "now-build": "next build"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "arg": "^4.1.0",
-    "fiona": "^3.3.0"
+    "arg": "^4.1.0"
   }
 }

@@ -1,53 +1,22 @@
-const sanityClient = require("@sanity/client");
-const {
-  api: { projectId }
-} = require("../cms/sanity.json");
+import api from "./api";
+import { nodeHandler, mapStar, niceSlug } from "./model-helpers";
 
-const cmsClient = sanityClient({
-  projectId,
-  dataset: "production",
-  useCdn: false
-});
+const getAllData = async slug => {
+  const star = await api.getStar();
+  const mapped = mapStar(star);
 
-const getStar = async () => cmsClient.fetch("*");
+  const siteData = mapped["site-config"].filter(
+    item => item._id === "global-config"
+  )[0];
 
-const nodeHandler = (node, root) => {
-  if (typeof root === "undefined") {
-    root = node;
-  }
-  
-  if (node == null) {
-    return node;
-  } else if (node.constructor === Array) {
-    return node.map(item => nodeHandler(item, root));
-  } else if (node.constructor === Object) {
-    if (node._type === "reference") {
-      return nodeHandler(root[node._ref], root);
-    } else {
-      return Object.entries(node).reduce((memo, [key, value]) => {
-        return { ...memo, [key]: nodeHandler(value, root) };
-      }, {});
-    }
-  } else {
-    return node;
-  }
-};
+  const routeData = mapped.route.filter(
+    /* depending on the structure of the cms model, this filter function might need to be updated */
+    route => niceSlug(route.slug.current) === niceSlug(slug)
+  )[0];
 
-const mapStar = star => {
-  const hash = star.reduce((memo, item) => ({ ...memo, [item._id]: item }), {});
-
-  const ret = Object.entries(nodeHandler(hash)).reduce(
-    (memo, [key, value]) => ({
-      ...memo,
-      [value._type]: [...(memo[value._type] || []), value]
-    }),
-    {}
-  );
-
-  return ret;
+  return { siteData, routeData };
 };
 
 module.exports = {
-  getStar,
-  mapStar
+  getAllData
 };

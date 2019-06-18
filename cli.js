@@ -39,8 +39,8 @@ try {
 const dir = args._[args._.length - 1];
 
 if (!dir) {
-  console.log(readFileSync(join(__dirname, 'readme.md'), 'utf8'))
-  process.exit(0)
+  console.log(readFileSync(join(__dirname, "readme.md"), "utf8"));
+  process.exit(0);
 }
 
 const command = `
@@ -56,53 +56,92 @@ const package = require("./package.json")
 package.name = "${dir}"
 package.scripts.dev = "now dev"
 require("fs").writeFileSync("./package.json", JSON.stringify(package, null, 2))
-const now = require("./now.json")
-now.name = "${dir}"
-require("fs").writeFileSync("./now.json", JSON.stringify(now, null, 2))
+const nowJson = require("./now.json")
+nowJson.name = "${dir}"
+require("fs").writeFileSync("./now.json", JSON.stringify(nowJson, null, 2))
 const manifest = require("./static/manifest.json")
 manifest.short_name = "${dir}"
-${args['--description'] ? `manifest.name = "${args['--description']}"` : ''}
-${args['--theme-color'] ? `manifest.theme_color = "${args['--theme-color']}"` : ''}
-${args['--theme-background'] ? `manifest.background_color = "${args['--theme-background']}"` : ''}
+${args["--description"] ? `manifest.name = "${args["--description"]}"` : ""}
+${
+  args["--theme-color"]
+    ? `manifest.theme_color = "${args["--theme-color"]}"`
+    : ""
+}
+${
+  args["--theme-background"]
+    ? `manifest.background_color = "${args["--theme-background"]}"`
+    : ""
+}
 require("fs").writeFileSync("./static/manifest.json", JSON.stringify(manifest, null, 2))
 HERE
 
 # install core dependencies
 yarn add next-offline isomorphic-unfetch
 
-${args['--npm-install'] ? `
+${
+  args["--npm-install"]
+    ? `
 # npm install (using yarn) dependencies specified
-yarn add ${args['--npm-install'].join(',').split(',').join(' ')}
-` : ``}
+yarn add ${args["--npm-install"]
+        .join(",")
+        .split(",")
+        .join(" ")}
+`
+    : ``
+}
 
-${args['--create-sanity'] ? `
+${
+  args["--create-sanity"]
+    ? `
 # setup new sanity project using @sanity/cli in cms folder
 sanity init -y --output-path cms --dataset production --create-project ${dir} &&
-` : ``}
+`
+    : ``
+}
 
-${args['--with-sanity'] ? `
+${
+  args["--with-sanity"]
+    ? `
 # setup existing sanity project using @sanity/cli in cms folder
-sanity init -y --output-path cms --dataset production --project ${args['--with-sanity']} &&
-` : ``}
+sanity init -y --output-path cms --dataset production --project ${
+        args["--with-sanity"]
+      } &&
+`
+    : ``
+}
 
-${args['--create-sanity'] || args['--with-sanity'] ? `
-yarn add @sanity/client next-sanity-schemas
+${
+  args["--create-sanity"] || args["--with-sanity"]
+    ? `
+yarn add @sanity/client next-sanity-schemas next-components
 # copy sanity skeleton files
 cp -r ${__dirname}/skeleton-with-sanity/. . &&
 # because we are using sanity, update now.json to remap all routes to /
 node -p <<HERE &&
-const now = require("./now.json")
-now.routes.push(
+const nowJson = require("./now.json")
+nowJson.routes.push(
   { "src": "/static/(.*)", "dest": "/static/\\\$1" },
   { "src": "/_next/(.*)", "dest": "/_next/\\\$1" },
   { "src": "/(?<slug>.*)", "dest": "/?slug=/\\\$slug" }
 )
-require("fs").writeFileSync("./now.json", JSON.stringify(now, null, 2))
+require("fs").writeFileSync("./now.json", JSON.stringify(nowJson, null, 2))
+HERE
+node -p <<HERE &&
+const sanityJson = require("./cms/sanity.json")
+sanityJson.parts.push({
+  "implements": "part:@sanity/desk-tool/structure",
+  "path": "./deskStructure.js"
+})
+require("fs").writeFileSync("./cms/sanity.json", JSON.stringify(sanityJson, null, 2))
 HERE
 rm pages/about.js
-` : ``}
+`
+    : ``
+}
 
-${args['--with-emotion'] ? `
+${
+  args["--with-emotion"]
+    ? `
 # setup emotion, including dependencies, babel config and demo in pages/emotion.js
 cp -r ${__dirname}/skeleton-with-emotion/. . &&
 yarn add emotion emotion-theming @emotion/babel-preset-css-prop \\
@@ -112,25 +151,25 @@ const babelrc = JSON.parse(require("fs").readFileSync("./.babelrc"))
 babelrc.presets.push("@emotion/babel-preset-css-prop")
 require("fs").writeFileSync(".babelrc", JSON.stringify(babelrc, null, 2))
 HERE
-` : ``}
+`
+    : ``
+}
 
 cd -
-`.replace(/[\s\n]*$/gm, '')
+`.replace(/[\s\n]*$/gm, "");
 
 console.log(`
 Script to execute:
 
-${command.split('\n').join('\n    ').replace(/^\s*#/gm, '\n    #')}
-`)
+${command
+  .split("\n")
+  .join("\n    ")
+  .replace(/^\s*#/gm, "\n    #")}
+`);
 
-if(args['--dry-run']) {
-  console.log(`remove the --dry-run flag to execute this command`)
+if (args["--dry-run"]) {
+  console.log(`remove the --dry-run flag to execute this command`);
 } else {
-  console.log(`... about to execute - wish me luck!`)
-  exec(command)
+  console.log(`... about to execute - wish me luck!`);
+  exec(command);
 }
-
-// # set the cms package json main property to the model
-// const cmsPackage = require("./cms/package.json")
-// cmsPackage.main = "model.js"
-// require("fs").writeFileSync("./cms/package.json", JSON.stringify(cmsPackage, null, 2))

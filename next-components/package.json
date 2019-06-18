@@ -1,6 +1,7 @@
 {
-  "name": "next-sanity-schemas",
-  "version": "1.0.9",
+  "name": "next-components",
+  "version": "1.0.1",
+  "description": "",
   "main": "dist/index.js",
   "scripts": {
     "prepublish": "npm run build",
@@ -13,11 +14,18 @@
     "@babel/plugin-transform-runtime": "^7.4.4",
     "@babel/preset-env": "^7.4.5",
     "@babel/preset-react": "^7.0.0",
-    "@babel/register": "^7.4.4",
-    "@babel/runtime": "^7.4.5",
-    "@babel/runtime-corejs2": "^7.4.5",
-    "bcp47": "^1.1.2",
+    "@emotion/core": "^10.0.10",
+    "@emotion/is-prop-valid": "^0.8.1",
+    "@emotion/styled": "^10.0.12",
+    "babel-plugin-module-resolver": "^3.2.0",
+    "emotion-theming": "^10.0.10",
+    "mineral-ui": "^0.58.0",
+    "mineral-ui-tokens": "^0.4.0",
+    "nodemon": "^1.19.1",
     "react": "^16.8.6",
     "react-dom": "^16.8.6"
-  }
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
 }

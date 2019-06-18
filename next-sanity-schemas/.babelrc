@@ -1,4 +1,4 @@
 {
-  "presets": [["env", { "targets": { "node": "4" } }], "react"],
-  "plugins": ["transform-runtime"]
-}
+    "presets": [["@babel/env", { "targets": { "node": "4" } }], ["@babel/react"]],
+    "plugins": ["@babel/transform-runtime"]
+  }

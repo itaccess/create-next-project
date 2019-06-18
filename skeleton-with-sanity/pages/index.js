@@ -1,43 +1,72 @@
 import Error from "next/error";
 import Link from "next/link";
+import { css } from "@emotion/core";
 import model from "../app/model";
 import Header from "../components/header";
+import { Text } from "next-components/dist/atoms";
+import { sections, GlobalStyles, ThemeProvider } from "next-components";
 
-const Page = ({ slug, data }) => {
-  console.log(data);
+const modelToViewName = modelName =>
+  modelName.replace(/^([a-z])/, (x, first) => first.toUpperCase());
 
-  return data ? (
-    <div>
+const Page = ({ slug, routeData, siteData }) => {
+  console.log(routeData);
+  console.log(siteData);
+
+  const theme = {};
+  if (siteData.globalFont) {
+    theme.fontFamily = siteData.globalFont;
+  }
+
+  return routeData ? (
+    <ThemeProvider theme={theme}>
+      <GlobalStyles />
       <Header />
-      <h3>{data.page.title}</h3>
-    </div>
-  ) : <Error statusCode={404} />;
+      <Text
+        as="h1"
+        css={css`
+          text-align: center;
+        `}
+      >
+        {routeData.page.title}
+      </Text>
+      {routeData.page.content.map((section, index) => {
+        const sectionName = modelToViewName(section._type);
+
+        if (sections[sectionName]) {
+          const Section = sections[sectionName];
+          return (
+            <section key={index}>
+              <Section {...section} />
+            </section>
+          );
+        }
+      })}
+    </ThemeProvider>
+  ) : (
+    <Error statusCode={404} />
+  );
 };
 
 Page.getInitialProps = async ({ query: { slug }, res }) => {
-  const data = model
-    .mapStar(await model.getStar())
-    .route.filter(
-      /* depending on the structure of the cms model, this filter function might need to be updated */
-      route => route.slug.current.toLowerCase() === slug.replace(/^\/|\/$/g, "").replace(/^$/, "/").toLowerCase()
-    )[0];
+  const { routeData, siteData } = await model.getAllData(slug);
 
-  const etag = require("crypto")
-    .createHash("md5")
-    .update(JSON.stringify(data || ''))
-    .digest("hex");
-  
   if (res) {
-    res.setHeader("Cache-Control", "s-maxage=1, stale-while-revalidate");
-    res.setHeader("X-version", etag);
+    // https://github.com/zeit/next.js/issues/746#issuecomment-305075299
+    if (!routeData) {
+      res.statusCode = 404;
+    } else {
+      const etag = require("crypto")
+        .createHash("md5")
+        .update(JSON.stringify([routeData, siteData] || ""))
+        .digest("hex");
+
+      res.setHeader("Cache-Control", "s-maxage=1, stale-while-revalidate");
+      res.setHeader("X-version", etag);
+    }
   }
 
-  // https://github.com/zeit/next.js/issues/746#issuecomment-305075299
-  if (!data && res) {
-    res.statusCode = 404
-  }
-
-  return { slug, data };
+  return { slug, routeData, siteData };
 };
 
 export default Page;

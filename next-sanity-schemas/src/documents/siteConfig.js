@@ -37,6 +37,13 @@ export default {
         ),
     },
     {
+      title: 'Global font',
+      description:
+        'Font name exactly as it is called in google fonts',
+      name: 'globalFont',
+      type: 'string'
+    },
+    {
       title: 'Brand logo',
       description:
         'Best choice is to use an SVG where the color are set with currentColor',

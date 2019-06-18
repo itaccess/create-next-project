@@ -1,0 +1,21 @@
+{
+  "presets": [
+    ["@babel/env", { "targets": { "node": "4" } }],
+    [
+      "@babel/react"
+    ]
+  ],
+  "plugins": [
+    "@babel/transform-runtime",
+    [
+      "babel-plugin-module-resolver",
+      {
+        "root": ["./src/sections"],
+        "alias": {
+          "@emotion/core": "./src/utils/jsx-theme.js",
+          "@emotion-alias/core": "@emotion/core"
+        }
+      }
+    ]
+  ]
+}
