@@ -1,0 +1,5 @@
+#!/bin/sh
+
+sanity init -y --output-path cms --dataset production --create-project $DIRECTORY &&
+cd cms &&
+sanity dataset import $DIRNAME/sample-data.ndjson production

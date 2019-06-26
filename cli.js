@@ -16,9 +16,7 @@ try {
     {
       "--dry-run": Boolean,
       // "--create-sanity": Boolean,
-      // sanity init -y --output-path cms --dataset production --create-project $DIRECTORY
       "--with-sanity": String,
-      "--with-emotion": Boolean,
       "--npm-install": [String],
       "--description": String,
       "--theme-color": String,
@@ -37,7 +35,6 @@ try {
   }
 }
 
-// process.env.DIRECTORY = join(__dirname, args._[args._.length - 1]);
 process.env.DIRECTORY = args._[args._.length - 1];
 process.env.DIRNAME = __dirname;
 
@@ -69,7 +66,7 @@ ${__dirname}/scripts/init-next-project
 const command = `
 # copy files from template into new project folder
 ${__dirname}/scripts/install-dependencies
-${__dirname}/scripts/with-sanity
+${__dirname}/scripts/${process.env.WITH_SANITY ? 'with-sanity' : 'create-sanity'}
 cp -r ${__dirname}/skeleton/. .
 ${__dirname}/scripts/configure-json-files
 ${__dirname}/scripts/install-sanity-dependencies
