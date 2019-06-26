@@ -1,0 +1,3 @@
+#!/bin/sh
+
+sanity init -y --output-path cms --dataset production --project $WITH_SANITY

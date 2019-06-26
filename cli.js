@@ -15,7 +15,8 @@ try {
   args = arg(
     {
       "--dry-run": Boolean,
-      "--create-sanity": Boolean,
+      // "--create-sanity": Boolean,
+      // sanity init -y --output-path cms --dataset production --create-project $DIRECTORY
       "--with-sanity": String,
       "--with-emotion": Boolean,
       "--npm-install": [String],
@@ -36,140 +37,50 @@ try {
   }
 }
 
-const dir = args._[args._.length - 1];
+// process.env.DIRECTORY = join(__dirname, args._[args._.length - 1]);
+process.env.DIRECTORY = args._[args._.length - 1];
+process.env.DIRNAME = __dirname;
 
-if (!dir) {
+if (!process.env.DIRECTORY) {
   console.log(readFileSync(join(__dirname, "readme.md"), "utf8"));
   process.exit(0);
 }
 
+const envified = Object.entries(args).reduce(
+  (memo, [arg, value]) => ({
+    ...memo,
+    [arg
+      .toUpperCase()
+      .replace(/--/, "")
+      .replace(/-/g, "_")
+      .replace(/^_$/, "PARAMS")]: Array.isArray(value)
+      ? value.join("\n")
+      : value
+  }),
+  {}
+);
+
+process.env = { ...process.env, ...envified };
+
+const initCommand = `
+./scripts/init-next-project
+`
+
 const command = `
-# use globally installed now command to initialise static next js boilerplate
-which now &&
-now init nextjs ${dir} &&
-cd ${dir} &&
 # copy files from template into new project folder
-cp -r ${__dirname}/skeleton/. . &&
-# update custom config and meta information
-node -p <<HERE &&
-const package = require("./package.json")
-package.name = "${dir}"
-package.scripts.dev = "now dev"
-require("fs").writeFileSync("./package.json", JSON.stringify(package, null, 2))
-const nowJson = require("./now.json")
-nowJson.name = "${dir}"
-require("fs").writeFileSync("./now.json", JSON.stringify(nowJson, null, 2))
-const manifest = require("./static/manifest.json")
-manifest.short_name = "${dir}"
-${args["--description"] ? `manifest.name = "${args["--description"]}"` : ""}
-${
-  args["--theme-color"]
-    ? `manifest.theme_color = "${args["--theme-color"]}"`
-    : ""
-}
-${
-  args["--theme-background"]
-    ? `manifest.background_color = "${args["--theme-background"]}"`
-    : ""
-}
-require("fs").writeFileSync("./static/manifest.json", JSON.stringify(manifest, null, 2))
-HERE
-
-# install core dependencies
-yarn add next-offline isomorphic-unfetch
-
-${
-  args["--npm-install"]
-    ? `
-# npm install (using yarn) dependencies specified
-yarn add ${args["--npm-install"]
-        .join(",")
-        .split(",")
-        .join(" ")}
-`
-    : ``
-}
-
-${
-  args["--create-sanity"]
-    ? `
-# setup new sanity project using @sanity/cli in cms folder
-sanity init -y --output-path cms --dataset production --create-project ${dir} &&
-`
-    : ``
-}
-
-${
-  args["--with-sanity"]
-    ? `
-# setup existing sanity project using @sanity/cli in cms folder
-sanity init -y --output-path cms --dataset production --project ${
-        args["--with-sanity"]
-      } &&
-`
-    : ``
-}
-
-${
-  args["--create-sanity"] || args["--with-sanity"]
-    ? `
-yarn add @sanity/client next-sanity-schemas next-components
-# copy sanity skeleton files
-cp -r ${__dirname}/skeleton-with-sanity/. . &&
-# because we are using sanity, update now.json to remap all routes to /
-node -p <<HERE &&
-const nowJson = require("./now.json")
-nowJson.routes.push(
-  { "src": "/static/(.*)", "dest": "/static/\\\$1" },
-  { "src": "/_next/(.*)", "dest": "/_next/\\\$1" },
-  { "src": "/(?<slug>.*)", "dest": "/?slug=/\\\$slug" }
-)
-require("fs").writeFileSync("./now.json", JSON.stringify(nowJson, null, 2))
-HERE
-node -p <<HERE &&
-const sanityJson = require("./cms/sanity.json")
-sanityJson.parts.push({
-  "implements": "part:@sanity/desk-tool/structure",
-  "path": "./deskStructure.js"
-})
-require("fs").writeFileSync("./cms/sanity.json", JSON.stringify(sanityJson, null, 2))
-HERE
+../scripts/install-dependencies
+../scripts/with-sanity
+cp -r ../skeleton/. .
+../scripts/configure-json-files
+../scripts/install-sanity-dependencies
 rm pages/about.js
 `
-    : ``
-}
-
-${
-  args["--with-emotion"]
-    ? `
-# setup emotion, including dependencies, babel config and demo in pages/emotion.js
-cp -r ${__dirname}/skeleton-with-emotion/. . &&
-yarn add emotion emotion-theming @emotion/babel-preset-css-prop \\
-  @emotion/core @emotion/is-prop-valid @emotion/styled &&
-node -p <<HERE &&
-const babelrc = JSON.parse(require("fs").readFileSync("./.babelrc"))
-babelrc.presets.push("@emotion/babel-preset-css-prop")
-require("fs").writeFileSync(".babelrc", JSON.stringify(babelrc, null, 2))
-HERE
-`
-    : ``
-}
-
-cd -
-`.replace(/[\s\n]*$/gm, "");
-
-console.log(`
-Script to execute:
-
-${command
-  .split("\n")
-  .join("\n    ")
-  .replace(/^\s*#/gm, "\n    #")}
-`);
 
 if (args["--dry-run"]) {
+  console.log(command)
   console.log(`remove the --dry-run flag to execute this command`);
 } else {
-  console.log(`... about to execute - wish me luck!`);
-  exec(command);
+  exec(initCommand)
+  process.chdir(process.env.DIRECTORY)
+  exec(command)
 }

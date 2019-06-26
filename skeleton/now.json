@@ -13,7 +13,10 @@
     {
       "src": "^/robots.txt$",
       "dest": "/static/robots.txt"
-    }
+    },
+    { "src": "/static/(.*)", "dest": "/static/$1" },
+    { "src": "/_next/(.*)", "dest": "/_next/$1" },
+    { "src": "/(?<slug>.*)", "dest": "/?slug=/$slug" }
   ],
   "builds": [
     {

@@ -1,0 +1,4 @@
+#!/bin/sh
+
+# install core dependencies
+yarn add $NPM_INSTALL next-offline isomorphic-unfetch next-components @sanity/client emotion emotion-theming @emotion/babel-preset-css-prop @emotion/core @emotion/is-prop-valid @emotion/styled

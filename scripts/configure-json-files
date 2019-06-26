@@ -1,0 +1,38 @@
+#!/usr/bin/env node
+const { join } = require('path')
+const { readFileSync, writeFileSync } = require('fs')
+const { DIRECTORY, THEME_COLOR, THEME_BACKGROUND, DESCRIPTION } = process.env;
+
+const cwd = process.cwd()
+
+const readJson = file => JSON.parse(readFileSync(join(cwd, file)))
+const writeJson = (file, content) => writeFileSync(join(cwd, file), JSON.stringify(content, null, 2));
+
+const package = readJson('package.json');
+package.name = DIRECTORY;
+package.scripts.dev = "now dev";
+writeJson('package.json', package);
+
+const nowJson = readJson('now.json');
+nowJson.name = DIRECTORY;
+writeJson('now.json', nowJson);
+
+const sanityJson = readJson('cms/sanity.json');
+sanityJson.parts.push({
+  "implements": "part:@sanity/desk-tool/structure",
+  "path": "./deskStructure.js"
+})
+writeJson('cms/sanity.json', sanityJson);
+
+const manifest = readJson('static/manifest.json');
+manifest.short_name = DIRECTORY;
+if (DESCRIPTION) {
+  manifest.name = DESCRIPTION;
+}
+if (THEME_COLOR) {
+  manifest.theme_color = THEME_COLOR;
+}
+if (THEME_BACKGROUND) {
+  manifest.background_color = THEME_BACKGROUND;
+}
+writeJson('static/manifest.json', manifest);

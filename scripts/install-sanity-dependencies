@@ -1,0 +1,5 @@
+#!/bin/sh
+
+# install core dependencies
+cd cms
+yarn add next-sanity-schemas
