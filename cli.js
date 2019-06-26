@@ -63,16 +63,16 @@ const envified = Object.entries(args).reduce(
 process.env = { ...process.env, ...envified };
 
 const initCommand = `
-./scripts/init-next-project
+${__dirname}/scripts/init-next-project
 `
 
 const command = `
 # copy files from template into new project folder
-../scripts/install-dependencies
-../scripts/with-sanity
-cp -r ../skeleton/. .
-../scripts/configure-json-files
-../scripts/install-sanity-dependencies
+${__dirname}/scripts/install-dependencies
+${__dirname}/scripts/with-sanity
+cp -r ${__dirname}/skeleton/. .
+${__dirname}/scripts/configure-json-files
+${__dirname}/scripts/install-sanity-dependencies
 rm pages/about.js
 `
 
