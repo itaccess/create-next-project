@@ -6,6 +6,9 @@
   "bin": {
     "create-next-project": "cli.js"
   },
+  "scripts": {
+    "create-my-app": "rm -rf my-app && node . my-app"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",

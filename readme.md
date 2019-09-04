@@ -19,14 +19,29 @@ Create a boilerplate static next app configured to be deployed to zeit's now inf
 
     $ npm create next-project next-app-name --npm-install lodash,jest
 
-... configure use with emotion (install dependencies and configure babel etc...) ...
-
-    $ npm create next-project next-app-name --with-emotion
-
 ... configure santiy cms gui and connect to existing project (for example with id: r5xu3dum) ...
 
     $ npm create next-project next-app-name --with-sanity r5xu3dum
 
-... configure santiy cms gui and create new sanity project named after output directory ...
+... otherwise it will create a sanity project for you
 
-    $ npm create next-project next-app-name --create-sanity
+## Development
+
+... create the sample app `my-app`
+
+    yarn create-my-app
+
+... link the libraries for use globally on your development machine ...
+
+    cd next-components; npm link; cd -
+    cd next-sanity-schemas; npm link; cd -
+
+... from inside app using next-components or next-sanity-schemas, link to globally available packages on your development machine ...
+
+    cd my-app; npm link next-components; cd -
+    cd my-app/cms; npm link next-sanity-schemas; cd -
+
+... run build watchers in linked libraries ...
+
+    cd next-components && yarn build:watch
+    cd next-sanity-schemas && yarn build:watch

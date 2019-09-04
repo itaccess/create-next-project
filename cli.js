@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+
 const childProcess = require("child_process");
 const arg = require("arg");
 const { readFileSync } = require("fs");
