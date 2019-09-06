@@ -23,7 +23,9 @@
     "mineral-ui-tokens": "^0.4.0",
     "nodemon": "^1.19.1",
     "react": "^16.8.6",
-    "react-dom": "^16.8.6"
+    "react-dom": "^16.8.6",
+    "rebass": "^4.0.5",
+    "theme-ui": "^0.2.41"
   },
   "keywords": [],
   "author": "",
