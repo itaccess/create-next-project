@@ -1,10 +1,13 @@
 import Error from "next/error";
-import Link from "next/link";
 import { css } from "@emotion/core";
 import model from "../app/model";
+import { ThemeProvider, Styled, ColorMode } from "theme-ui";
 import Header from "../components/header";
-import { Text } from "next-components/dist/atoms";
-import { sections, GlobalStyles, ThemeProvider } from "next-components";
+import { Theme, GlobalStyles } from "../src";
+import { sections as sectionsLocal } from "../components";
+import { Text } from "rebass";
+
+const sections = {sectionsLocal};
 
 const modelToViewName = modelName =>
   modelName.replace(/^([a-z])/, (x, first) => first.toUpperCase());
@@ -13,7 +16,7 @@ const Page = ({ slug, routeData, siteData }) => {
   console.log(routeData);
   console.log(siteData);
 
-  const theme = {};
+  const theme = Theme;
   if (siteData.globalFont) {
     theme.fontFamily = siteData.globalFont;
   }
@@ -21,27 +24,30 @@ const Page = ({ slug, routeData, siteData }) => {
   return routeData ? (
     <ThemeProvider theme={theme}>
       <GlobalStyles />
+      <ColorMode />
       <Header />
-      <Text
-        as="h1"
-        css={css`
-          text-align: center;
-        `}
-      >
-        {routeData.page.title}
-      </Text>
-      {routeData.page.content.map((section, index) => {
-        const sectionName = modelToViewName(section._type);
+      <Styled.root>
+        <Text
+          as="h1"
+          css={css`
+            text-align: center;
+          `}
+        >
+          {routeData.page.title}
+        </Text>
+        {routeData.page.content.map((section, index) => {
+          const sectionName = modelToViewName(section._type);
 
-        if (sections[sectionName]) {
-          const Section = sections[sectionName];
-          return (
-            <section key={index}>
-              <Section {...section} />
-            </section>
-          );
-        }
-      })}
+          if (sections[sectionName]) {
+            const Section = sections[sectionName];
+            return (
+              <section key={index}>
+                <Section {...section} />
+              </section>
+            );
+          }
+        })}
+      </Styled.root>
     </ThemeProvider>
   ) : (
     <Error statusCode={404} />

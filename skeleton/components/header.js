@@ -1,24 +1,21 @@
-import { css } from "@emotion/core";
-import styled from "@emotion/styled";
+import React from 'react'
+import { useColorMode } from 'theme-ui'
+import { Button } from 'rebass'
 
-const H1 = styled('h1')`
-font-family: sans-serif;
-`
-
-const H2 = styled(H1)`
-color: #d36ac2;
-`.withComponent('h2')
-
-const mainCss = css`
-padding: 24px;
-text-align: center;
-`
-
-const Header = () => (
-  <header css={mainCss}>
-    <H1>Next.js Example on Now 2.0</H1>
-    <H2>with emotion :)</H2>
-  </header>
-);
-
-export default Header;
+export default function Header() {
+  const [colorMode, setColorMode] = useColorMode()
+  return (
+    <header>
+      <Button
+        sx={{
+          m: 4,
+          ":hover": {
+            backgroundColor: "tomato"
+          }
+        }}
+        onClick={() => setColorMode(colorMode === 'light' ? 'dark' : 'light')}>
+        Toggle {colorMode === 'light' ? 'Dark' : 'Light'}
+      </Button>
+    </header>
+  )
+}
