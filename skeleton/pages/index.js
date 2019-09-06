@@ -4,10 +4,10 @@ import model from "../app/model";
 import { ThemeProvider, Styled, ColorMode } from "theme-ui";
 import Header from "../components/header";
 import { Theme, GlobalStyles } from "../src";
-import { sections as sectionsLocal } from "../components";
+import { sections as sectionsLibrary } from "next-components";
 import { Text } from "rebass";
 
-const sections = {sectionsLocal};
+const sections = {sectionsLibrary};
 
 const modelToViewName = modelName =>
   modelName.replace(/^([a-z])/, (x, first) => first.toUpperCase());
