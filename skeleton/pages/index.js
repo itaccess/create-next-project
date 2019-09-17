@@ -3,6 +3,7 @@ import Link from "next/link";
 import { css } from "@emotion/core";
 import model from "../app/model";
 import Header from "../components/header";
+import Form from "../components/form";
 import { Text } from "next-components/dist/atoms";
 import { sections, GlobalStyles, ThemeProvider } from "next-components";
 
@@ -22,6 +23,7 @@ const Page = ({ slug, routeData, siteData }) => {
     <ThemeProvider theme={theme}>
       <GlobalStyles />
       <Header />
+      <Form />
       <Text
         as="h1"
         css={css`

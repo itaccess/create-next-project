@@ -71,7 +71,6 @@ ${__dirname}/scripts/${process.env.WITH_SANITY ? 'with-sanity' : 'create-sanity'
 cp -r ${__dirname}/skeleton/. .
 ${__dirname}/scripts/configure-json-files
 ${__dirname}/scripts/install-sanity-dependencies
-rm pages/about.js
 `
 
 if (args["--dry-run"]) {
