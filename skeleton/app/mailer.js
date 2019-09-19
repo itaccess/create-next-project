@@ -11,7 +11,7 @@ const send = ({ email, name, text }) => {
   const from = name && email ? `${name} <${email}>` : `${name || email}`
   const message = {
     from,
-    to: 'papershy@me.com',
+    to: process.env.EMAIL_TO,
     subject: `New message from ${from}`,
     text,
     replyTo: from
