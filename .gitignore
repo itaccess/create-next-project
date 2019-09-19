@@ -3,6 +3,7 @@ node_modules/
 .DS_Store
 *.tmp
 my-app*/
+contact-form*/
 
 misc/
 yarn.lock
