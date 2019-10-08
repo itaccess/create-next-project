@@ -3,3 +3,4 @@
 # use globally installed now command to initialise static next js boilerplate
 which now &&
 now init nextjs $DIRECTORY
+rm $DIRECTORY/components/nav.js

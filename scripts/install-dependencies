@@ -1,4 +1,4 @@
 #!/bin/sh
 
 # install core dependencies
-yarn add $NPM_INSTALL next-offline isomorphic-unfetch next-components @sanity/client emotion @emotion/babel-preset-css-prop @emotion/core @emotion/is-prop-valid @emotion/styled @mdx-js/loader @next/mdx rebass theme-ui
+yarn add $NPM_INSTALL next-offline isomorphic-unfetch next-components @sanity/client emotion @emotion/babel-preset-css-prop @emotion/core @emotion/is-prop-valid @emotion/styled @mdx-js/loader @next/mdx rebass @rebass/preset

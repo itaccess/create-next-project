@@ -1,9 +1,8 @@
-import React from 'react'
-import { useColorMode } from 'theme-ui'
-import { Button } from 'rebass'
+import { useState } from "react";
+import { Button } from "rebass";
 
-export default function Header() {
-  const [colorMode, setColorMode] = useColorMode()
+const Header = ({ setCurrentTheme = Function.prototype }) => {
+  const [colorMode, setColorMode] = useState("dark");
   return (
     <header>
       <Button
@@ -13,9 +12,16 @@ export default function Header() {
             backgroundColor: "tomato"
           }
         }}
-        onClick={() => setColorMode(colorMode === 'light' ? 'dark' : 'light')}>
-        Toggle {colorMode === 'light' ? 'Dark' : 'Light'}
+        onClick={() => {
+          const nextMode = colorMode === "light" ? "dark" : "light";
+          setColorMode(nextMode);
+          setCurrentTheme(nextMode);
+        }}
+      >
+        Toggle {colorMode === "light" ? "Dark" : "Light"}
       </Button>
     </header>
-  )
-}
+  );
+};
+
+export default Header;

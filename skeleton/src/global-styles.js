@@ -37,8 +37,8 @@ const globalStyles = theme => css`
 html, body {
   margin: 0;
   padding: 0;
-  background-color: ${theme.backgroundColor};
-  color: ${theme.color};
+  background-color: ${theme.colors.background};
+  color: ${theme.colors.text};
 }
 `
 const GlobalStyles = () => <Global styles={globalStyles} />;

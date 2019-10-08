@@ -10,7 +10,6 @@ const writeJson = (file, content) => writeFileSync(join(cwd, file), JSON.stringi
 
 const package = readJson('package.json');
 package.name = DIRECTORY;
-package.scripts.dev = "now dev";
 writeJson('package.json', package);
 
 const nowJson = readJson('now.json');

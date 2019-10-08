@@ -1,6 +1,5 @@
 import Document, { Html, Head, Main, NextScript } from "next/document";
-const manifest = require("../static/manifest.json");
-import { InitializeColorMode } from 'theme-ui'
+import manifest from "../static/manifest.json";
 
 const HTML_TITLE = manifest.short_name;
 const META_DESCRIPTION = manifest.name;
@@ -46,7 +45,6 @@ export default class MyDocument extends Document {
           {this.props.styleTags}
         </Head>
         <body>
-        <InitializeColorMode />
           <Main />
           <NextScript />
         </body>

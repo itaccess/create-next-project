@@ -1,14 +1,31 @@
+import { useState } from "react";
 import Error from "next/error";
-import { css } from "@emotion/core";
+import { css, Global } from "@emotion/core";
 import model from "../app/model";
-import { ThemeProvider, Styled, ColorMode } from "theme-ui";
 import Header from "../components/header";
-import { Theme, GlobalStyles } from "../src";
-import { sections as sectionsLocal} from "../components";
+import { sections as sectionsLocal } from "../components";
 import { sections as sectionsLibrary } from "next-components";
-import { Text } from "rebass";
+import { default as appTheme } from "../app/theme";
+import { default as rebassTheme } from "@rebass/preset";
+import { ThemeProvider } from "emotion-theming";
+import { Heading, Button } from "rebass";
 
-const sections = {sectionsLocal, sectionsLibrary};
+const theme = { ...rebassTheme, ...appTheme };
+
+const jsonCopy = serializableObject =>
+  JSON.parse(JSON.stringify(serializableObject));
+
+const sections = { sectionsLocal, sectionsLibrary };
+
+const globalStyles = css`
+  html,
+  body {
+    margin: 0;
+    padding: 0;
+    background-color: ${theme.colors.background};
+    color: ${theme.colors.text};
+  }
+`;
 
 const modelToViewName = modelName =>
   modelName.replace(/^([a-z])/, (x, first) => first.toUpperCase());
@@ -16,39 +33,46 @@ const modelToViewName = modelName =>
 const Page = ({ slug, routeData, siteData }) => {
   console.log(routeData);
   console.log(siteData);
+  console.log(theme);
 
-  const theme = Theme;
-  if (siteData.globalFont) {
-    theme.fontFamily = siteData.globalFont;
-  }
+  const darkTheme = jsonCopy(theme);
+  darkTheme.colors.primary = "red";
+  darkTheme.colors.background = theme.colors.text;
+  darkTheme.colors.text = theme.colors.background;
+
+  const [currentTheme, setCurrentTheme] = useState(darkTheme);
+
+  // if (siteData.globalFont) {
+  //   theme.fonts.body = siteData.globalFont;
+  // }
 
   return routeData ? (
-    <ThemeProvider theme={theme}>
-      <GlobalStyles />
-      <ColorMode />
-      <Header />
-      <Styled.root>
-        <Text
-          as="h1"
-          css={css`
-            text-align: center;
-          `}
-        >
-          {routeData.page.title}
-        </Text>
-        {routeData.page.content.map((section, index) => {
-          const sectionName = modelToViewName(section._type);
+    <ThemeProvider theme={currentTheme}>
+      <Global styles={globalStyles} />
+      <Header
+        setCurrentTheme={colorMode =>
+          colorMode === "light"
+            ? setCurrentTheme(theme)
+            : setCurrentTheme(darkTheme)
+        }
+      />
+      <Button>asdasd</Button>
+      <Button variant="secondary" mr={2}>
+        Secondary
+      </Button>
+      <Heading>{routeData.page.title}</Heading>
+      {routeData.page.content.map((section, index) => {
+        const sectionName = modelToViewName(section._type);
 
-          if (sections[sectionName]) {
-            const Section = sections[sectionName];
-            return (
-              <section key={index}>
-                <Section {...section} />
-              </section>
-            );
-          }
-        })}
-      </Styled.root>
+        if (sections[sectionName]) {
+          const Section = sections[sectionName];
+          return (
+            <section key={index}>
+              <Section {...section} />
+            </section>
+          );
+        }
+      })}
     </ThemeProvider>
   ) : (
     <Error statusCode={404} />
